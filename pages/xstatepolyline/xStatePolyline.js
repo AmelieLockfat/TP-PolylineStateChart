@@ -16,11 +16,47 @@ let polyline // La polyline en cours de construction;
 
 const polylineMachine = createMachine(
     {
-        /** @xstate-layout N4IgpgJg5mDOIC5gF8A0IB2B7CdGgAcsAbATwBkBLDMfEI2SgF0qwzoA9EBaANnVI9eAOgAM4iZMkB2ZGnokK1MMMoRitJAsYs2nRABYATAMQAOAIzCD0gJwXetgwGZezgw9ty5QA */
+        /** @xstate-layout N4IgpgJg5mDOIC5QAcD2AbAngGQJYDswA6XCdMAYgFkB5AVQGUBRAYWwEkWBpAbQAYAuohSpYuAC65U+YSAAeiAGxE+qgOwBGAJwBWAMx8NegCwAOU2oA0ITImNqiirWpd8ATKa0bF9nQF8-azQsPEIiCAAnAEMAdwIoCiZYAGMo5DB+ISQQNDFJaVkFBAM3ImNjRUNTNy09LWM+KxtEAFo3BqI3PkUNHUqdNzVqxQCgjBwCYkjY+IoAISjkgGtYZEWMwVlciSkZbKLFUz5HU29NA2M+tz1rWwQWtT0iLUU1LVNjNy-Dy-9AnPGoSm0Ti+AStEYrA43EyW1EOwK+0QGjcyjcGnc3W8lUMFVuiD0+jKxjqqhJOlMPnaowBIUm4RBswhzDYnF4GiyIjyu0KyJ0Ome7g8GkpfHKhKadx05UcWj4FjUlzUfD0mhpwQmYWmoISTAAcgAVJgAJVh2W2+T2oCK9g0REehm61W0IvxxW8zzUNWlXVVOg0GgC-3wqAgcDhdMIcO5iOtrWMdq0SY8YqclP9GjdLT0gyIOixFL4tUOGku6sB9NI5GjCKt8mRT1MJm85h6rwTlKzAdMnTMRfc-uuvT+Y0jwJmYJrlt5xX9nXcTg8XnapzdvTtAcUXVM0s8Zl0Qb8QA */
         id: "polyLine",
+
         initial: "idle",
+
         states : {
             idle: {
+                on: {
+                    MOUSECLICK: {
+                        actions : "createLine",
+                target : "drawing"}
+                }
+            },
+
+            drawing: {
+                on: {
+                    Escape: {actions :"abandon"},
+
+                    Backspace: {
+                        actions: "removeLastPoint",
+                        cond: "plusDeDeuxPoints",
+                        target: "drawing",
+                        internal: true
+                    },
+
+                    
+
+                    MOUSECLICK: [{
+                        target: "drawing",
+                        internal: true,
+                        cond: "pasPlein",
+                        actions : "setLastPoint"
+                    }, {
+                        actions : "saveLine"
+                    }],
+
+                    ENTER: {
+                        actions: "saveLine",
+                        cond: "plusDeDeuxPoints"
+                    }
+                }
             }
         }
     },
